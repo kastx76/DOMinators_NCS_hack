@@ -113,8 +113,8 @@ CREATE TABLE cards (
 ### Setup
 
 ```bash
-git clone https://github.com/yourusername/algeria-train-tracker
-cd algeria-train-tracker
+git clone https://github.com/kastx76/DOMinators_NCS_hack.git
+cd DOMinators_NCS_hack
 npm install
 npm run dev
 ```
@@ -137,9 +137,22 @@ SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your-anon-key
 GEMINI_API_KEY=your-gemini-key
 ```
+---
+## 📸 Demo & Screenshots
+
+> 📹 [Watch Demo Video](https://drive.google.com/drive/folders/1-YeTkYte1W15rdLAKkG6HyEyHi6fC0PR?usp=sharing)
+> 
+---
+
+## 📸 Demo & Screenshots
+
+> (Add screen recording or images of train tracking, ticket payment, and AI estimation.)
+
+---
 
 ---
 ## 📜 License
+
 
 This project is licensed under the MIT License.  
 © 2025 Yakoubi Ahmed Moncef, Alem Rayane, Harnane Sami Youcef, Guettaya  Mohamed Abderaouf
