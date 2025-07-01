@@ -144,7 +144,9 @@ GEMINI_API_KEY=your-gemini-key
 ---
 ## UI 
 
-🎨 [Figma Design] (https://www.figma.com/design/kE5jJJvibgc5s0oYqbsiaq/figma_presentation?node-id=0-1&p=f&t=Za29TWQL2i0IwbVv-0)
+ > 🎨 [Figma Design](https://www.figma.com/design/kE5jJJvibgc5s0oYqbsiaq/figma_presentation?node-id=0-1&p=f&t=Za29TWQL2i0IwbVv-0)
+ Note : only buutons of line Agha-Zeralda work
+ > 🎨 [Visual Identity](https://v0-train-trace-algeria-guide.vercel.app/)
 
 ---
 ## 📜 License
