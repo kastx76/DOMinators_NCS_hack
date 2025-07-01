@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcNmocEEJmFPZvMRfZekfcfPEwCMXcAKoLQg&s">
+    <title>تتبع القطارات الجزائر - Algeria Train Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles-payment.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Leaflet CSS - Load from CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+          crossorigin=""/>
+</head>
+<body>
+    <!-- 3D Train Canvas -->
+    <canvas id="train3d" class="train-3d-canvas"></canvas>
+    
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+
+<div class="nav-brand">
+                <div class="logo">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 6h18l-3 6H6l-3-6z"/>
+                        <path d="M6 12v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-6"/>
+                        <circle cx="8" cy="20" r="2"/>
+                        <circle cx="16" cy="20" r="2"/>
+                    </svg>
+                </div>
+
+
+                <div class="brand-text">
+                    <h1>تتبع القطارات</h1>
+                    <span>Algeria Rail</span>
+                </div>
+            </div>
+            <div class="nav-controls">
+                <button class="theme-toggle" id="themeToggle">
+                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                    <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+                
+                <button class="lang-toggle" id="langToggle">
+                    <span class="lang-ar">عربي</span>
+                    <span class="lang-en">EN</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div id="mainContent">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h2 class="hero-title" data-ar="تتبع القطارات في الجزائر" data-en="Track Trains in Algeria">تتبع القطارات في الجزائر</h2>
+                <p class="hero-subtitle" data-ar="اكتشف مواعيد القطارات والمحطات في الوقت الفعلي" data-en="Discover real-time train schedules and stations">اكتشف مواعيد القطارات والمحطات في الوقت الفعلي</p>
+                
+                <!-- Search Form -->
+                <div class="search-container">
+                    <div class="search-form">
+                        <div class="search-field">
+                            <label data-ar="من" data-en="From">من</label>
+                            <select id="fromStation">
+                                <option value="">اختر المحطة</option>
+                            </select>
+                        </div>
+                        
+                        <button class="swap-stations" id="swapStations">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M7 16l4-4-4-4M17 8l-4 4 4 4"/>
+                            </svg>
+                        </button>
+                        
+                        <div class="search-field">
+                            <label data-ar="إلى" data-en="To">إلى</label>
+                            <select id="toStation">
+                                <option value="">اختر المحطة</option>
+                            </select>
+                        </div>
+                        
+                        <div class="search-field">
+                            <label data-ar="التاريخ" data-en="Date">التاريخ</label>
+                            <input type="date" id="travelDate">
+                        </div>
+                        
+                        <button class="search-btn" id="searchBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="M21 21l-4.35-4.35"/>
+                            </svg>
+                            <span data-ar="بحث" data-en="Search">بحث</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hero-visual">
+                <div class="train-animation">
+                    <div class="train">
+                        <div class="train-car"></div>
+                        <div class="train-car"></div>
+                        <div class="train-car"></div>
+                    </div>
+                    <div class="track"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Departures -->
+        <section class="live-departures">
+            <div class="container">
+                <div class="section-header">
+                    <h3 data-ar="المغادرات المباشرة" data-en="Live Departures">المغادرات المباشرة</h3>
+                    <div class="live-indicator">
+                        <div class="pulse"></div>
+                        <span data-ar="مباشر" data-en="Live">مباشر</span>
+                    </div>
+                </div>
+                
+                <div class="departures-grid" id="departuresGrid">
+                    <!-- Departure cards will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Map Section -->
+        <section class="map-section">
+            <div class="container">
+                <div class="section-header">
+                    <h3 data-ar="خريطة المحطات التفاعلية" data-en="Interactive Stations Map">خريطة المحطات التفاعلية</h3>
+                    <div class="map-controls">
+                        <button class="map-control-btn" id="centerMap">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 6v12M6 12h12"/>
+                            </svg>
+                            <span data-ar="توسيط الخريطة" data-en="Center Map">توسيط الخريطة</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="map-container">
+                    <div id="leafletMap" class="leaflet-map"></div>
+                    <div class="map-legend">
+                        <div class="legend-item">
+                            <div class="legend-marker station-marker"></div>
+                            <span data-ar="محطة قطار" data-en="Train Station">محطة قطار</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-marker active-train-marker"></div>
+                            <span data-ar="قطار نشط" data-en="Active Train">قطار نشط</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-marker delayed-train-marker"></div>
+                            <span data-ar="قطار متأخر" data-en="Delayed Train">قطار متأخر</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-line"></div>
+                            <span data-ar="خط السكة" data-en="Railway Line">خط السكة</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Results -->
+        <section class="search-results" id="searchResults" style="display: none;">
+            <div class="container">
+                <div class="results-header">
+                    <h3 data-ar="نتائج البحث" data-en="Search Results">نتائج البحث</h3>
+                    <div class="results-count" id="resultsCount"></div>
+                </div>
+                <div class="results-grid" id="resultsGrid">
+                    <!-- Search results will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="features">
+            <div class="container">
+                <h3 data-ar="الميزات" data-en="Features">الميزات</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12,6 12,12 16,14"/>
+                            </svg>
+                        </div>
+                        <h4 data-ar="الوقت الفعلي" data-en="Real-time">الوقت الفعلي</h4>
+                        <p data-ar="تتبع القطارات في الوقت الفعلي مع التحديثات المباشرة" data-en="Track trains in real-time with live updates">تتبع القطارات في الوقت الفعلي مع التحديثات المباشرة</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                        </div>
+                        <h4 data-ar="جميع المحطات" data-en="All Stations">جميع المحطات</h4>
+                        <p data-ar="معلومات شاملة عن جميع محطات القطار في الجزائر" data-en="Comprehensive information about all train stations in Algeria">معلومات شاملة عن جميع محطات القطار في الجزائر</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                <path d="M2 17l10 5 10-5"/>
+                                <path d="M2 12l10 5 10-5"/>
+                            </svg>
+                        </div>
+                        <h4 data-ar="حجز التذاكر" data-en="Ticket Booking">حجز التذاكر</h4>
+                        <p data-ar="احجز تذاكرك بسهولة وادفع بأمان عبر الإنترنت" data-en="Book your tickets easily and pay securely online">احجز تذاكرك بسهولة وادفع بأمان عبر الإنترنت</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Payment Page -->
+    <div id="paymentPage" class="payment-page" style="display: none;">
+        <div class="payment-container">
+            <div class="payment-header">
+                <button class="back-btn" id="backToMain">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    <span data-ar="العودة" data-en="Back">العودة</span>
+                </button>
+                <h2 data-ar="الدفع" data-en="Payment">الدفع</h2>
+            </div>
+
+            <div class="payment-content">
+                <div class="trip-summary">
+                    <h3 data-ar="ملخص الرحلة" data-en="Trip Summary">ملخص الرحلة</h3>
+                    <div class="trip-details" id="tripDetails">
+                        <!-- Trip details will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="payment-form">
+                    <div class="security-notice">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="M9 12l2 2 4-4"/>
+                        </svg>
+                        <span data-ar="يمكن فقط للبطاقات المسجلة في نظامنا شراء التذاكر" data-en="Only registered cards in our system can purchase tickets">Only registered cards in our system can purchase tickets</span>
+                    </div>
+
+                    <h3 data-ar="معلومات الدفع" data-en="Payment Information">معلومات الدفع</h3>
+                    <form id="paymentForm">
+                        <div class="form-group">
+                            <label data-ar="اسم المسافر" data-en="Passenger Name">اسم المسافر</label>
+                            <input type="text" id="passengerName" name="passengerName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label data-ar="رقم الهاتف" data-en="Phone Number">رقم الهاتف</label>
+                            <input type="tel" id="phoneNumber" name="phoneNumber" required>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label data-ar="رقم البطاقة" data-en="Card Number">رقم البطاقة</label>
+                            <input type="text" id="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label data-ar="تاريخ الانتهاء" data-en="Expiry Date">تاريخ الانتهاء</label>
+                                <input type="text" id="expiryDate" name="expiryDate" placeholder="MM/YY" required>
+                            </div>
+                            <div class="form-group">
+                                <label data-ar="رمز الأمان" data-en="CVV">رمز الأمان</label>
+                                <input type="text" id="cvv" name="cvv" placeholder="123" required>
+                            </div>
+                        </div>
+
+                        <div class="total-amount">
+                            <span data-ar="المبلغ الإجمالي:" data-en="Total Amount:">المبلغ الإجمالي:</span>
+                            <span id="totalAmount">150 DA</span>
+                        </div>
+
+                        <button type="submit" class="pay-btn" disabled>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="15" y1="9" x2="9" y2="15"/>
+                                <line x1="9" y1="9" x2="15" y2="15"/>
+                            </svg>
+                            <span data-ar="يرجى التحقق من البطاقة" data-en="Please verify card">Please verify card</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ticket Page -->
+    <div id="ticketPage" class="ticket-page" style="display: none;">
+        <div class="ticket-container">
+            <div class="ticket-header">
+                <button class="back-btn" id="backToMainFromTicket">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    </svg>
+                    <span data-ar="الرئيسية" data-en="Home">الرئيسية</span>
+                </button>
+                <h2 data-ar="تذكرة القطار" data-en="Train Ticket">تذكرة القطار</h2>
+                <button class="download-btn" id="downloadTicket">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7,10 12,15 17,10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    <span data-ar="تحميل" data-en="Download">تحميل</span>
+                </button>
+            </div>
+
+            <div class="ticket-content">
+                <div class="ticket" id="trainTicket">
+                    <div class="ticket-top">
+                        <div class="ticket-logo">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 6h18l-3 6H6l-3-6z"/>
+                                <path d="M6 12v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-6"/>
+                                <circle cx="8" cy="20" r="2"/>
+                                <circle cx="16" cy="20" r="2"/>
+                            </svg>
+                            <span>Algeria Rail</span>
+                        </div>
+                        <div class="ticket-status">
+                            <span class="status-badge confirmed" data-ar="مؤكد" data-en="Confirmed">مؤكد</span>
+                        </div>
+                    </div>
+
+                    <div class="ticket-main">
+                        <div class="route-info">
+                            <div class="station from">
+                                <div class="station-code" id="fromCode">AGH</div>
+                                <div class="station-name" id="fromName">AGHA</div>
+                                <div class="time" id="departureTime">05:10</div>
+                            </div>
+                            <div class="route-line">
+                                <div class="train-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M3 6h18l-3 6H6l-3-6z"/>
+                                        <path d="M6 12v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-6"/>
+                                    </svg>
+                                </div>
+                                <div class="duration" id="journeyDuration">48m</div>
+                            </div>
+                            <div class="station to">
+                                <div class="station-code" id="toCode">ZRL</div>
+                                <div class="station-name" id="toName">ZERALDA</div>
+                                <div class="time" id="arrivalTime">05:58</div>
+                            </div>
+                        </div>
+
+                        <div class="ticket-details">
+                            <div class="detail-row">
+                                <div class="detail-item">
+                                    <span class="label" data-ar="المسافر" data-en="Passenger">المسافر</span>
+                                    <span class="value" id="ticketPassenger">BENJAMIN SHAH</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label" data-ar="رقم القطار" data-en="Train">رقم القطار</span>
+                                    <span class="value" id="ticketTrain">1501</span>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-item">
+                                    <span class="label" data-ar="التاريخ" data-en="Date">التاريخ</span>
+                                    <span class="value" id="ticketDate">05 JAN 25</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label" data-ar="المقعد" data-en="Seat">المقعد</span>
+                                    <span class="value" id="ticketSeat">B5</span>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-item">
+                                    <span class="label" data-ar="السعر" data-en="Price">السعر</span>
+                                    <span class="value price" id="ticketPrice">150 DA</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label" data-ar="الفئة" data-en="Class">الفئة</span>
+                                    <span class="value" id="ticketClass">Economy</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ticket-bottom">
+                        <div class="qr-code">
+                            <div class="qr-placeholder">
+                                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                                    <rect x="3" y="3" width="5" height="5"/>
+                                    <rect x="16" y="3" width="5" height="5"/>
+                                    <rect x="3" y="16" width="5" height="5"/>
+                                    <path d="M21 16h-3a2 2 0 0 0-2 2v3"/>
+                                    <path d="M21 21v.01"/>
+                                    <path d="M12 7v3a2 2 0 0 1-2 2H7"/>
+                                    <path d="M3 12h.01"/>
+                                    <path d="M12 3h.01"/>
+                                    <path d="M12 16v.01"/>
+                                    <path d="M16 12h1"/>
+                                    <path d="M21 12v.01"/>
+                                    <path d="M12 21v-1"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ticket-footer">
+                            <p data-ar="يرجى إظهار هذه التذكرة عند الصعود" data-en="Please show this ticket when boarding">يرجى إظهار هذه التذكرة عند الصعود</p>
+                            <div class="booking-ref">
+                                <span data-ar="رقم الحجز:" data-en="Booking Ref:">رقم الحجز:</span>
+                                <span id="bookingRef">ALG2025010001</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-brand">
+                        <div class="logo">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 6h18l-3 6H6l-3-6z"/>
+                                <path d="M6 12v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-6"/>
+                                <circle cx="8" cy="20" r="2"/>
+                                <circle cx="16" cy="20" r="2"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4>تتبع القطارات الجزائر</h4>
+                            <p data-ar="نظام تتبع القطارات الحديث للجزائر" data-en="Modern train tracking system for Algeria">نظام تتبع القطارات الحديث للجزائر</p>
+                        </div>
+                    </div>
+                </div>            
+            <div class="footer-bottom">
+                <p>&copy; 2025 تتبع القطارات الجزائر. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Leaflet JS - Load from CDN -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
+            crossorigin=""></script>
+    
+    <!-- Three.js Import Map -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.158.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.158.0/examples/jsm/"
+        }
+    }
+    </script>
+    
+    <!-- Load scripts -->
+    <script src="train3d.js" type="module"></script>
+    <script src="payment.js" type="module"></script>
+    <script src="script.js"></script>
+</body>
+</html>

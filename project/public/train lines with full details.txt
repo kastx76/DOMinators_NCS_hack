@@ -1,0 +1,25 @@
+line 1 : Agha-zeralda 
+les gares :                      localisation at gps         
+Agha                             36.768 , 3.057
+Ateliers                         36.756 , 3.065
+H.Dey                            36.745 , 3.094         
+Caroubier                        36.735 , 3.119
+El Harrach                       36.721 , 3.132 
+Gué de Constantine               36.697 , 3.095 	
+Ain Naadja                       36.689 , 3.077                 
+Baba Ali	                 36.667 , 3.052                 
+Birtouta                         36.630 , 3.009
+Tessala El Merdja	         36.639 , 2.935
+Sidi Abde allah	                 36.680 , 2.892
+Sidi Abde allah-University       36.692 , 2,871
+Zéralda                          36.702 , 2,849
+
+line 2 : Oran-Alger
+Agha                             36.768 , 3.057
+El Harrach                       36.721 , 3.132 
+blida                            36.478 , 2.815 
+afroune                          36.473 , 2.624  
+ain el defla                     36.267 , 1.969    
+chlef                            36.166 , 1.342    
+relizhan                         35.748 , 0.555  
+oran                             35.698 , -0.638

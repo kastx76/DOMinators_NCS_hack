@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" fill="#0D1B2A"/>
+  
+  <!-- Shield -->
+  <path d="M256 64L128 128V256C128 352 192 416 256 448C320 416 384 352 384 256V128L256 64Z" fill="#1E40AF" stroke="#3B82F6" stroke-width="8"/>
+  
+  <!-- Circuit Lines -->
+  <path d="M192 192H320M256 128V256M192 320H320M128 256H384" stroke="#60A5FA" stroke-width="6" stroke-linecap="round" stroke-dasharray="10 10"/>
+  
+  <!-- Network Nodes -->
+  <circle cx="128" cy="128" r="12" fill="#93C5FD" stroke="#60A5FA" stroke-width="4"/>
+  <circle cx="384" cy="128" r="12" fill="#93C5FD" stroke="#60A5FA" stroke-width="4"/>
+  <circle cx="128" cy="320" r="12" fill="#93C5FD" stroke="#60A5FA" stroke-width="4"/>
+  <circle cx="384" cy="320" r="12" fill="#93C5FD" stroke="#60A5FA" stroke-width="4"/>
+</svg>

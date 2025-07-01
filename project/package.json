@@ -1,0 +1,15 @@
+{
+  "name": "algeria-train-tracker",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "three": "^0.158.0"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
