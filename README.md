@@ -141,14 +141,10 @@ GEMINI_API_KEY=your-gemini-key
 ## 📸 Demo & Screenshots
 
 > 📹 [Watch Demo Video](https://drive.google.com/drive/folders/1-YeTkYte1W15rdLAKkG6HyEyHi6fC0PR?usp=sharing)
-> 
 ---
+## UI 
 
-## 📸 Demo & Screenshots
-
-> (Add screen recording or images of train tracking, ticket payment, and AI estimation.)
-
----
+🎨 [Figma Design] (https://www.figma.com/design/kE5jJJvibgc5s0oYqbsiaq/figma_presentation?node-id=0-1&p=f&t=Za29TWQL2i0IwbVv-0)
 
 ---
 ## 📜 License
